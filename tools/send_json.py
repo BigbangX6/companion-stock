@@ -48,10 +48,10 @@ def check(data):
             return None
         v = obj[key]
         ok = {"num": num(v), "time": isinstance(v, str) and bool(TIME_RE.match(v)),
-              "text": isinstance(v, str) and v != "", "side": v in ("buy", "sell")}[kind]
+              "text": isinstance(v, str) and v != "", "opt": v in ("call", "put")}[kind]
         if not ok:
             hint = {"num": "un nombre sans guillemets", "time": 'une heure "AAAA-MM-JJ HH:MM"',
-                    "text": "un texte", "side": '"buy" ou "sell"'}[kind]
+                    "text": "un texte", "opt": '"call" ou "put" (en minuscules)'}[kind]
             errors.append(f"{where}{key} : {json.dumps(v, ensure_ascii=False)} n'est pas {hint}")
         return v
 
@@ -73,7 +73,7 @@ def check(data):
         errors.append("position : champ manquant (mettre null s'il n'y a pas de position)")
     elif data["position"] is not None:
         pos = data["position"]
-        need(pos, "side", "side", "position.")
+        need(pos, "type", "opt", "position.")
         need(pos, "price", "num", "position.")
         need(pos, "time", "time", "position.")
         need(pos, "pnl_pct", "num", "position.")
@@ -111,7 +111,7 @@ def check(data):
         prev = None
         for i, t in enumerate(trades):
             w = f"trades[{i}]."
-            need(t, "side", "side", w)
+            need(t, "type", "opt", w)
             need(t, "open_time", "time", w)
             need(t, "open_price", "num", w)
             close = need(t, "close_time", "time", w)

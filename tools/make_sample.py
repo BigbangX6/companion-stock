@@ -35,9 +35,10 @@ def make_curve(start_value, seed):
     return curve
 
 
-def pct(a, b, side):
+def pct(a, b, opt):
+    """Variation de l'indice entre achat (a) et maintenant/vente (b), vue par un Call ou un Put."""
     p = (b - a) / a * 100
-    return round(p if side == "buy" else -p, 2)
+    return round(p if opt == "call" else -p, 2)
 
 
 def market_time(rnd, day):
@@ -52,7 +53,7 @@ def make_trades(curve, seed, n=8):
     trades, day = [], date(2026, 11, 3)
     level = curve[0][1]
     for _ in range(n):
-        side = rnd.choice(["buy", "sell"])
+        opt = rnd.choice(["call", "put"])
         c_t = market_time(rnd, day)
         o_t = market_time(rnd, day - timedelta(days=rnd.randint(0, 3)))
         if o_t >= c_t:
@@ -60,12 +61,12 @@ def make_trades(curve, seed, n=8):
         o_p = round(level + rnd.gauss(0, level * 0.006))
         c_p = round(o_p + rnd.gauss(0, o_p * 0.006))
         trades.append({
-            "side": side,
+            "type": opt,
             "open_time": o_t.strftime("%Y-%m-%d %H:%M"),
             "open_price": o_p,
             "close_time": c_t.strftime("%Y-%m-%d %H:%M"),
             "close_price": c_p,
-            "pnl_pct": pct(o_p, c_p, side),
+            "pnl_pct": pct(o_p, c_p, opt),
         })
         day = o_t.date() - timedelta(days=rnd.randint(1, 3))
         level = o_p
@@ -79,8 +80,8 @@ def build(name, start_value, seed, with_position):
     position = None
     if with_position:
         entry_t, entry_v = next((t, v) for t, v in curve if t >= "2026-11-06 10:15")
-        position = {"side": "buy", "price": round(entry_v, 1), "time": entry_t,
-                    "pnl_pct": pct(entry_v, last_value, "buy")}
+        position = {"type": "call", "price": round(entry_v, 1), "time": entry_t,
+                    "pnl_pct": pct(entry_v, last_value, "call")}
     return {
         "index": name,
         "updated": NOW.strftime("%Y-%m-%d %H:%M"),
