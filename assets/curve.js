@@ -32,7 +32,7 @@
 
     const W = Math.max(box.clientWidth, 280);
     const H = W < 600 ? 230 : 320;
-    const pad = { l: 8, r: 70, t: 14, b: 30 };
+    const pad = { l: 8, r: 82, t: 14, b: 30 };
     const n = pts.length;
     const pos = opts.position && typeof opts.position.price === "number" ? opts.position : null;
 
@@ -84,16 +84,17 @@
     el("path", { d: line + ` L${x(n - 1)} ${H - pad.b} L${x(0)} ${H - pad.b} Z`, fill: `url(#${gid})` }, svg);
     el("path", { d: line, class: "line" }, svg);
 
-    // Position en cours : ligne du prix d'entrée + point d'entrée
+    // Position en cours : ligne du prix d'achat + point d'achat, étiquette "Call 8 223" / "Put 8 223"
     if (pos) {
       const yp = y(pos.price);
-      el("line", { x1: pad.l, x2: W - pad.r, y1: yp, y2: yp, class: "entry-line " + pos.side }, svg);
+      el("line", { x1: pad.l, x2: W - pad.r, y1: yp, y2: yp, class: "entry-line" }, svg);
       const idx = pts.findIndex((p) => p[0] >= pos.time);
-      if (idx >= 0) el("circle", { cx: x(idx), cy: yp, r: 5, class: "entry-dot " + pos.side }, svg);
-      const lbl = el("g", { class: "tag entry " + pos.side }, svg);
+      if (idx >= 0) el("circle", { cx: x(idx), cy: yp, r: 5, class: "entry-dot" }, svg);
+      const lbl = el("g", { class: "tag entry" }, svg);
       el("rect", { x: W - pad.r + 2, y: yp - 10, width: pad.r - 4, height: 20, rx: 10 }, lbl);
-      const t = el("text", { x: W - pad.r / 2, y: yp + 4, "text-anchor": "middle" }, lbl);
-      t.textContent = opts.fmtNumber(pos.price, 0);
+      const t = el("text", { x: W - pad.r / 2 + 1, y: yp + 4, "text-anchor": "middle" }, lbl);
+      const name = opts.labels[pos.type] || "";
+      t.textContent = (name ? name + " " : "") + opts.fmtNumber(pos.price, 0);
     }
 
     // Dernier point

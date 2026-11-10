@@ -14,9 +14,10 @@
       chart: "Évolution",
       position: "Position en cours",
       none: "Aucune position en cours",
-      buy: "Achat", sell: "Vente",
-      buyHint: "pari à la hausse", sellHint: "pari à la baisse",
-      entry: "Entrée", exit: "Sortie", since: "Depuis", result: "Résultat", side: "Sens",
+      call: "Call", put: "Put",
+      callHint: "gain si l'indice monte", putHint: "gain si l'indice baisse",
+      bought: "Acheté à", since: "Depuis", result: "Résultat", product: "Produit",
+      buyCol: "Achat", sellCol: "Vente",
       perf: "Profit and Loss", week: "Semaine", month: "Mois", year: "Année", trades: "trades",
       history: "Derniers trades", noTrades: "Aucun trade terminé",
       loading: "Chargement des données…",
@@ -33,9 +34,10 @@
       chart: "Chart",
       position: "Open position",
       none: "No open position",
-      buy: "Buy", sell: "Sell",
-      buyHint: "betting on a rise", sellHint: "betting on a fall",
-      entry: "Entry", exit: "Exit", since: "Since", result: "Result", side: "Side",
+      call: "Call", put: "Put",
+      callHint: "gains if the index rises", putHint: "gains if the index falls",
+      bought: "Bought at", since: "Since", result: "Result", product: "Product",
+      buyCol: "Buy", sellCol: "Sell",
       perf: "Profit and Loss", week: "Week", month: "Month", year: "Year", trades: "trades",
       history: "Recent trades", noTrades: "No closed trades",
       loading: "Loading data…",
@@ -166,7 +168,10 @@
       return;
     }
     const d = data, price = d.price || {}, pos = d.position, perf = d.performance || {};
-    const sideLabel = (s) => (s === "sell" ? t("sell") : t("buy"));
+    // Call / Put : pastille neutre + flèche. Le vert et le rouge restent réservés aux gains et pertes.
+    const optChip = (type) => type === "put"
+      ? `<span class="opt">▼ ${t("put")}</span>`
+      : type === "call" ? `<span class="opt">▲ ${t("call")}</span>` : `<span class="opt">—</span>`;
 
     main.innerHTML = `
       <section class="hero">
@@ -188,12 +193,12 @@
           <h2>${t("position")}</h2>
           ${pos ? `
             <div class="pos">
-              <span class="side ${pos.side === "sell" ? "sell" : "buy"}">${sideLabel(pos.side)}</span>
-              <span class="hint">${pos.side === "sell" ? t("sellHint") : t("buyHint")}</span>
+              ${optChip(pos.type)}
+              <span class="hint">${pos.type === "put" ? t("putHint") : pos.type === "call" ? t("callHint") : ""}</span>
               ${pill(pos.pnl_pct)}
             </div>
             <dl class="facts">
-              <div><dt>${t("entry")}</dt><dd>${fmtNumber(pos.price, 2)} Pts</dd></div>
+              <div><dt>${t("bought")}</dt><dd>${fmtNumber(pos.price, 2)} Pts</dd></div>
               <div><dt>${t("since")}</dt><dd>${fmtDateTime(pos.time)}<small>${duration(pos.time, price.time)}</small></dd></div>
             </dl>` : `<p class="muted">${t("none")}</p>`}
         </section>
@@ -214,10 +219,10 @@
         ${Array.isArray(d.trades) && d.trades.length ? `
           <div class="table-scroll">
             <table class="trades">
-              <thead><tr><th>${t("side")}</th><th>${t("entry")}</th><th>${t("exit")}</th><th>${t("result")}</th></tr></thead>
+              <thead><tr><th>${t("product")}</th><th>${t("buyCol")}</th><th>${t("sellCol")}</th><th>${t("result")}</th></tr></thead>
               <tbody>${d.trades.map((r) => `
                 <tr>
-                  <td><span class="side ${r.side === "sell" ? "sell" : "buy"}">${sideLabel(r.side)}</span></td>
+                  <td>${optChip(r.type)}</td>
                   <td>${fmtNumber(r.open_price, 0)}<small>${fmtDateTime(r.open_time)}</small></td>
                   <td>${fmtNumber(r.close_price, 0)}<small>${fmtDateTime(r.close_time)}</small></td>
                   <td>${pill(r.pnl_pct)}</td>
@@ -237,7 +242,7 @@
     window.drawCurve(box, data.curve, {
       position: data.position,
       fmtNumber, fmtDay, fmtPoint,
-      labels: { empty: t("emptyCurve") },
+      labels: { empty: t("emptyCurve"), call: t("call"), put: t("put") },
     });
   }
 
