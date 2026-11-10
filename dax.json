@@ -518,7 +518,7 @@
   },
   "trades": [
     {
-      "side": "buy",
+      "type": "call",
       "open_time": "2026-11-03 10:14",
       "open_price": 24610,
       "close_time": "2026-11-03 14:05",
@@ -526,7 +526,7 @@
       "pnl_pct": 0.14
     },
     {
-      "side": "buy",
+      "type": "call",
       "open_time": "2026-10-30 10:35",
       "open_price": 24648,
       "close_time": "2026-11-02 16:40",
@@ -534,7 +534,7 @@
       "pnl_pct": -0.02
     },
     {
-      "side": "buy",
+      "type": "call",
       "open_time": "2026-10-26 14:40",
       "open_price": 24225,
       "close_time": "2026-10-29 11:30",
@@ -542,7 +542,7 @@
       "pnl_pct": 1.05
     },
     {
-      "side": "buy",
+      "type": "call",
       "open_time": "2026-10-22 12:40",
       "open_price": 24266,
       "close_time": "2026-10-23 09:15",
@@ -550,7 +550,7 @@
       "pnl_pct": 0.51
     },
     {
-      "side": "buy",
+      "type": "call",
       "open_time": "2026-10-19 13:30",
       "open_price": 24108,
       "close_time": "2026-10-20 11:15",
@@ -558,7 +558,7 @@
       "pnl_pct": -0.39
     },
     {
-      "side": "buy",
+      "type": "call",
       "open_time": "2026-10-16 11:15",
       "open_price": 24263,
       "close_time": "2026-10-16 12:50",
@@ -566,7 +566,7 @@
       "pnl_pct": 0.86
     },
     {
-      "side": "buy",
+      "type": "call",
       "open_time": "2026-10-09 16:00",
       "open_price": 24299,
       "close_time": "2026-10-14 10:00",
@@ -574,7 +574,7 @@
       "pnl_pct": -0.38
     },
     {
-      "side": "sell",
+      "type": "put",
       "open_time": "2026-10-05 15:55",
       "open_price": 24369,
       "close_time": "2026-10-07 11:05",

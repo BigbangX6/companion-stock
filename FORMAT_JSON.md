@@ -6,6 +6,8 @@ Le moteur écrit deux fichiers, `cac40.json` et `dax.json`, et les dépose sur l
 
 Les deux fichiers ont exactement la même structure. Seuls le nom de l'indice et les valeurs changent.
 
+Le moteur achète un **Call** (gain si l'indice monte) ou un **Put** (gain si l'indice baisse), puis le revend. Le champ `type` dit lequel des deux ; l'achat et la vente sont décrits par les heures et les prix.
+
 ## Exemple complet
 
 Voici un `cac40.json` valide. La courbe est raccourcie ici à quelques points ; en réalité elle en contient environ 500. Des fichiers complets sont fournis à la racine du dépôt : [`cac40.json`](cac40.json) et [`dax.json`](dax.json).
@@ -22,7 +24,7 @@ Voici un `cac40.json` valide. La courbe est raccourcie ici à quelques points ; 
   },
 
   "position": {
-    "side": "buy",
+    "type": "call",
     "price": 8090.0,
     "time": "2026-11-07 10:15",
     "pnl_pct": 0.41
@@ -43,7 +45,7 @@ Voici un `cac40.json` valide. La courbe est raccourcie ici à quelques points ; 
 
   "trades": [
     {
-      "side": "sell",
+      "type": "put",
       "open_time": "2026-11-05 14:20",
       "open_price": 8342,
       "close_time": "2026-11-06 11:05",
@@ -67,17 +69,17 @@ Tous les champs sont obligatoires. Seul `position` peut valoir `null`.
 | `price.value` | nombre | Dernier cours de l'indice, en points | Gros chiffre en haut de page |
 | `price.change_pct` | nombre | Variation du jour en %, négative si l'indice baisse | Pastille verte ou rouge |
 | `price.time` | heure | Heure de ce cours | « Cours de 15:42 le 10/11/2026 » |
-| `position` | objet ou `null` | Trade en cours ; `null` s'il n'y en a pas | Bloc « Position en cours », ou « Aucune position en cours » |
-| `position.side` | `"buy"` ou `"sell"` | `buy` = pari sur la hausse, `sell` = pari sur la baisse | « Achat » ou « Vente » |
-| `position.price` | nombre | Prix d'entrée, en points | Ligne pointillée sur la courbe |
-| `position.time` | heure | Heure d'entrée | Point sur la courbe et durée de la position |
+| `position` | objet ou `null` | Call ou Put acheté et pas encore revendu ; `null` s'il n'y en a pas | Bloc « Position en cours », ou « Aucune position en cours » |
+| `position.type` | `"call"` ou `"put"` | Produit acheté, en minuscules | Pastille « ▲ Call » ou « ▼ Put » |
+| `position.price` | nombre | Niveau de l'indice à l'achat, en points | Ligne pointillée « Call 8 223 » sur la courbe |
+| `position.time` | heure | Heure d'achat | Point sur la courbe et durée de la position |
 | `position.pnl_pct` | nombre | Gain ou perte actuel en % | Pastille verte ou rouge |
 | `curve` | liste | Paires `[heure, valeur]`, de la plus ancienne à la plus récente | La courbe, tracée telle quelle |
 | `performance.week` / `month` / `year` | objet | `trades` = nombre de trades, `pnl_pct` = résultat cumulé en % | Tableau « Profit and Loss » |
-| `trades` | liste | Trades terminés, du plus récent au plus ancien | Tableau « Derniers trades » |
-| `trades[].side` | `"buy"` ou `"sell"` | Sens du trade | « Achat » ou « Vente » |
-| `trades[].open_time` / `open_price` | heure / nombre | Entrée du trade | Colonne « Entrée » |
-| `trades[].close_time` / `close_price` | heure / nombre | Sortie du trade | Colonne « Sortie » |
+| `trades` | liste | Trades terminés (achetés puis revendus), du plus récent au plus ancien | Tableau « Derniers trades » |
+| `trades[].type` | `"call"` ou `"put"` | Produit acheté puis revendu, en minuscules | Colonne « Produit » |
+| `trades[].open_time` / `open_price` | heure / nombre | Achat : heure et niveau de l'indice | Colonne « Achat » |
+| `trades[].close_time` / `close_price` | heure / nombre | Revente : heure et niveau de l'indice | Colonne « Vente » |
 | `trades[].pnl_pct` | nombre | Résultat du trade en % | Pastille verte ou rouge |
 
 Le site ne déduit jamais une valeur d'une autre : si `pnl_pct` est faux, il affiche une valeur fausse.
@@ -97,6 +99,7 @@ Le site ne déduit jamais une valeur d'une autre : si `pnl_pct` est faux, il aff
 - [ ] Le fichier s'ouvre sans erreur dans un validateur JSON
 - [ ] `updated` et `price.time` sont à l'heure de Paris
 - [ ] Aucun nombre n'est entre guillemets
+- [ ] `type` vaut `"call"` ou `"put"`, en minuscules
 - [ ] `position` vaut `null` quand aucun trade n'est ouvert
 - [ ] `curve` est triée du plus ancien au plus récent
 - [ ] `trades` est trié du plus récent au plus ancien
