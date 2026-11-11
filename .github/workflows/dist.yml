@@ -1,0 +1,15 @@
+# Vérifie que dist/index.html (le fichier envoyé sur OVH) correspond bien aux sources.
+# En cas d'échec : lancer « python3 tools/build_single.py », puis committer dist/.
+name: Fichier unique à jour
+on:
+  push:
+  pull_request:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python3 tools/build_single.py --check

@@ -1,11 +1,26 @@
 // Companion Stock : toutes les données viennent de <indice>.json, relu toutes les 45 s.
+// Une seule page : l'indice affiché est choisi par l'adresse (#dax pour le DAX, rien pour le CAC 40),
+// et « /about » ajouté à l'adresse ouvre la fenêtre À propos (#about, #dax/about).
 (function () {
   const REFRESH_MS = 45000;
   const PAGES = [
-    { id: "cac40", label: "CAC 40", href: "index.html", json: "cac40.json" },
-    { id: "dax", label: "DAX", href: "dax.html", json: "dax.json" },
+    { id: "cac40", label: "CAC 40", json: "cac40.json" },
+    { id: "dax", label: "DAX", json: "dax.json" },
   ];
-  const page = PAGES.find((p) => p.id === document.body.dataset.page) || PAGES[0];
+
+  // ---------- Adresse (#…) ----------
+  function readRoute() {
+    const parts = location.hash.replace(/^#\/?/, "").toLowerCase().split("/");
+    return {
+      page: PAGES.find((p) => p.id !== PAGES[0].id && parts.includes(p.id)) || PAGES[0],
+      about: parts.includes("about"),
+    };
+  }
+  function routeHash(pageId, about) {
+    const h = [pageId !== PAGES[0].id && pageId, about && "about"].filter(Boolean).join("/");
+    return h ? "#" + h : location.pathname + location.search;
+  }
+  let page = readRoute().page;
 
   const T = {
     fr: {
@@ -182,14 +197,14 @@
     document.title = `${page.label} · Companion Stock`;
     document.getElementById("app").innerHTML = `
       <header class="top">
-        <a class="brand" href="index.html">
+        <a class="brand" href="#">
           ${ROBOT}
           <span class="brand-text">
             <span class="brand-name">Companion <span>Stock</span></span>
             <span class="brand-tagline">${t("tagline")}</span>
           </span>
         </a>
-        <nav class="tabs">${PAGES.map((p) => `<a href="${p.href}"${p.id === page.id ? ' aria-current="page"' : ""}>${p.label}</a>`).join("")}</nav>
+        <nav class="tabs">${PAGES.map((p) => `<a href="${p.id === PAGES[0].id ? "#" : "#" + p.id}"${p.id === page.id ? ' aria-current="page"' : ""}>${p.label}</a>`).join("")}</nav>
         <div class="actions">
           <button class="icon-btn" id="theme-btn" title="${t("theme")}" aria-label="${t("theme")}">◐</button>
           <button class="about-btn" id="about-btn">? <span>${t("about")}</span></button>
@@ -212,13 +227,13 @@
       </dialog>`;
 
     const dlg = document.getElementById("about");
-    document.getElementById("about-btn").onclick = () => { dlg.showModal(); history.replaceState(null, "", "#about"); };
+    document.getElementById("about-btn").onclick = () => { dlg.showModal(); history.replaceState(null, "", routeHash(page.id, true)); };
     document.getElementById("about-close").onclick = () => dlg.close();
-    dlg.addEventListener("close", () => { if (location.hash === "#about") history.replaceState(null, "", location.pathname); });
+    dlg.addEventListener("close", () => { if (readRoute().about) history.replaceState(null, "", routeHash(page.id, false)); });
     dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
     dlg.querySelectorAll("[data-lang]").forEach((b) => (b.onclick = () => setLang(b.dataset.lang, true)));
     document.getElementById("theme-btn").onclick = toggleTheme;
-    if (location.hash === "#about") dlg.showModal();
+    if (readRoute().about) dlg.showModal();
     updateStatus();
   }
 
@@ -328,13 +343,16 @@
 
   // ---------- Chargement ----------
   async function load() {
+    const target = page;
     try {
-      const res = await fetch(page.json + "?t=" + Date.now(), { cache: "no-store" });
+      const res = await fetch(target.json + "?t=" + Date.now(), { cache: "no-store" });
       if (!res.ok) throw new Error("HTTP " + res.status);
       const json = await res.json();
+      if (target !== page) return; // l'onglet a changé pendant le chargement
       data = json;
       failed = false;
     } catch (e) {
+      if (target !== page) return;
       // On garde les dernières données affichées : l'heure affichée montre leur âge.
       failed = true;
       console.warn("[CompanionStock] chargement impossible :", e.message);
@@ -351,6 +369,24 @@
   setInterval(load, REFRESH_MS);
   setInterval(updateStatus, 30000);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
+
+  // Changement d'onglet (#dax ↔ CAC 40) ou bouton Précédent / Suivant du navigateur
+  window.addEventListener("hashchange", () => {
+    const r = readRoute();
+    if (r.page !== page) {
+      page = r.page;
+      data = null;
+      failed = false;
+      renderShell();
+      renderData();
+      load();
+      window.scrollTo(0, 0);
+    } else {
+      const dlg = document.getElementById("about");
+      if (r.about && !dlg.open) dlg.showModal();
+      if (!r.about && dlg.open) dlg.close();
+    }
+  });
 
   let resizeTimer;
   window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(drawChart, 150); });

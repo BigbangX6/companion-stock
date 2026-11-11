@@ -11,19 +11,20 @@ Le moteur, qui tourne sur un PC, dépose toutes les 45 secondes par SFTP deux fi
 
 | Fichier | Rôle |
 | --- | --- |
-| `index.html` | Page CAC 40 |
-| `dax.html` | Page DAX |
+| `index.html` | Le site (une seule page : CAC 40, et DAX à l'adresse `#dax`) |
 | `assets/app.js` | Chargement des JSON et affichage |
 | `assets/curve.js` | Courbe SVG (jours placés bout à bout, sans trou la nuit) |
 | `assets/about.js` | Texte de la page About (FR / EN) |
 | `assets/style.css` | Styles (clair / sombre, mobile) |
 | `assets/img/robot.svg` | Robot du logo (icône d'onglet) |
 | `assets/logo/` | Propositions de logo et page de test du robot animé (`test-anime.html`), non nécessaires en ligne |
+| `dist/` | **Les 3 fichiers à envoyer sur OVH**, générés par `tools/build_single.py` |
+| `tools/build_single.py` | Fabrique `dist/index.html`, le site en un seul fichier |
 | `tools/make_sample.py` | Génère des JSON d'exemple aléatoires |
 | `tools/send_json.py` | Vérifie les JSON et les envoie sur le site par SFTP |
 | `tools/send_json.example.ini` | Modèle de configuration SFTP |
 
-Aucune librairie ni étape de compilation : on copie les fichiers tels quels sur l'hébergement.
+Aucune librairie. Les sources restent en plusieurs fichiers pour le développement. Pour l'hébergement, `tools/build_single.py` les rassemble en un seul `index.html`.
 
 ## Robot du logo
 
@@ -84,6 +85,28 @@ Le site est publié à l'adresse https://bigbangx6.github.io/companion-stock/ un
 
 Sur GitHub Pages, le site affiche les `cac40.json` et `dax.json` présents dans le dépôt : ce sont des exemples figés, et le robot indique donc « IA hors ligne ».
 
-### Sur l'hébergement principal
+### Sur l'hébergement principal (OVH)
+
+Le site en ligne tient en **3 fichiers**, tous dans le dossier `dist/` :
+
+| Fichier | Contenu |
+| --- | --- |
+| `index.html` | Tout le site : pages, style, scripts, texte About, drapeaux, robot |
+| `cac40.json` | Données du CAC 40 (exemple ; le moteur le remplace) |
+| `dax.json` | Données du DAX (exemple ; le moteur le remplace) |
+
+Les déposer à la racine du site. Pour une mise à jour du site, seul `index.html` change.
+
+Après toute modification des sources, régénérer ce fichier et committer `dist/` :
+
+```bash
+python3 tools/build_single.py
+```
+
+Une vérification GitHub (« Fichier unique à jour ») échoue si on a oublié de le faire. `dist/` est aussi visible sur GitHub Pages, à l'adresse https://bigbangx6.github.io/companion-stock/dist/ : c'est exactement ce qui partira chez OVH.
+
+Adresses : `companionstock.ai` affiche le CAC 40, `companionstock.ai/#dax` le DAX, et `#about` (ou `#dax/about`) ouvre la fenêtre À propos.
+
+L'ancienne méthode, qui consiste à copier tous les fichiers sources, marche toujours :
 
 Copier tous les fichiers (sauf `tools/`, `assets/logo/`, `README.md` et `FORMAT_JSON.md`) sur l'hébergement. Le moteur remplace ensuite `cac40.json` et `dax.json`.
