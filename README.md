@@ -16,7 +16,7 @@ Le moteur, qui tourne sur un PC, dépose toutes les 45 secondes par SFTP deux fi
 | `assets/curve.js` | Courbe SVG (jours placés bout à bout, sans trou la nuit) |
 | `assets/about.js` | Texte de la page About (FR / EN) |
 | `assets/style.css` | Styles (clair / sombre, mobile) |
-| `assets/img/robot.svg` | Robot du logo (icône d'onglet) |
+| `assets/img/robot.svg`, `robot-32.png`, `robot-180.png`, `favicon.ico` | Icônes du robot (onglet, écran d'accueil iPhone) ; intégrées dans `dist/index.html` |
 | `assets/logo/` | Propositions de logo et page de test du robot animé (`test-anime.html`), non nécessaires en ligne |
 | `dist/` | **Les 3 fichiers à envoyer sur OVH**, générés par `tools/build_single.py` |
 | `tools/build_single.py` | Fabrique `dist/index.html`, le site en un seul fichier |

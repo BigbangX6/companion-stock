@@ -40,12 +40,19 @@ def build():
     assert link in html, "lien vers style.css introuvable dans index.html"
     html = html.replace(link, "<style>\n" + read("assets/style.css").strip() + "\n</style>")
 
-    # Icônes : le robot en SVG intégré ; favicon.ico serait un fichier de plus, on le retire
-    html = html.replace(
-        '<link rel="icon" href="assets/img/robot.svg" type="image/svg+xml">',
-        f'<link rel="icon" href="{data_uri("assets/img/robot.svg", "image/svg+xml")}" type="image/svg+xml">',
-    )
-    html = re.sub(r'\s*<link rel="icon" href="favicon\.ico"[^>]*>', "", html)
+    # Icônes du robot, intégrées dans la page (aucun fichier en plus) :
+    # PNG pour tous les navigateurs, SVG (s'éclaircit sur les onglets sombres), icône d'écran d'accueil iPhone
+    icons = {
+        '<link rel="icon" href="favicon.ico" sizes="32x32">':
+            f'<link rel="icon" href="{data_uri("assets/img/robot-32.png", "image/png")}" sizes="32x32" type="image/png">',
+        '<link rel="icon" href="assets/img/robot.svg" type="image/svg+xml">':
+            f'<link rel="icon" href="{data_uri("assets/img/robot.svg", "image/svg+xml")}" type="image/svg+xml">',
+        '<link rel="apple-touch-icon" href="assets/img/robot-180.png">':
+            f'<link rel="apple-touch-icon" href="{data_uri("assets/img/robot-180.png", "image/png")}">',
+    }
+    for tag, inlined in icons.items():
+        assert tag in html, f"{tag} introuvable dans index.html"
+        html = html.replace(tag, inlined)
 
     # Scripts : retirés de <head> et copiés en fin de <body>, dans le même ordre
     # (équivalent de « defer » : ils s'exécutent une fois la page lue).
