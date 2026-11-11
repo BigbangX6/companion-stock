@@ -78,4 +78,12 @@ Autres usages :
 
 ## Déployer
 
+### Sur GitHub Pages
+
+Le site est publié à l'adresse https://bigbangx6.github.io/companion-stock/ une fois GitHub Pages activé (Settings → Pages → Source : « Deploy from a branch », branche `main`, dossier `/ (root)`). Chaque modification poussée sur `main` est republiée en une minute environ. Le fichier `.nojekyll` demande à GitHub de servir les fichiers tels quels.
+
+Sur GitHub Pages, le site affiche les `cac40.json` et `dax.json` présents dans le dépôt : ce sont des exemples figés, et le robot indique donc « IA hors ligne ».
+
+### Sur l'hébergement principal
+
 Copier tous les fichiers (sauf `tools/`, `assets/logo/`, `README.md` et `FORMAT_JSON.md`) sur l'hébergement. Le moteur remplace ensuite `cac40.json` et `dax.json`.
