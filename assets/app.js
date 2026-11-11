@@ -25,6 +25,8 @@
       emptyCurve: "Pas de données de courbe.",
       demo: "Démonstrateur : trades fictifs, aucun ordre n'est passé sur les marchés.",
       about: "À propos", theme: "Changer de thème",
+      tagline: "Suivez les trades de l’IA",
+      aiOnline: "IA en ligne", aiLate: "IA en retard", aiOffline: "IA hors ligne",
       days: "j", hours: "h", min: "min",
       locale: "fr-FR",
     },
@@ -45,6 +47,8 @@
       emptyCurve: "No chart data.",
       demo: "Demonstrator: simulated trades, no orders are placed on the markets.",
       about: "About", theme: "Toggle theme",
+      tagline: "Follow the AI’s trades",
+      aiOnline: "AI online", aiLate: "AI delayed", aiOffline: "AI offline",
       days: "d", hours: "h", min: "min",
       locale: "en-GB",
     },
@@ -104,13 +108,87 @@
     return `${m} ${t("min")}`;
   }
 
+  // ---------- Robot du logo ----------
+  // Yeux en bougies (rouge = baisse, vert = hausse). Animations dans style.css.
+  // L'antenne indique l'état du moteur, d'après l'heure « updated » du JSON.
+  const ROBOT = `
+    <svg class="robot" viewBox="0 0 64 64" width="44" height="44" aria-hidden="true">
+      <line class="r-stroke" x1="32" y1="8" x2="32" y2="16" stroke-width="3" stroke-linecap="round"/>
+      <circle class="r-ring" cx="32" cy="6" r="4"/>
+      <circle class="r-dot" cx="32" cy="6" r="4"/>
+      <rect class="r-head" x="4" y="30" width="5" height="12" rx="2.5"/>
+      <rect class="r-head" x="55" y="30" width="5" height="12" rx="2.5"/>
+      <rect class="r-head" x="9" y="16" width="46" height="40" rx="13"/>
+      <g class="r-gaze">
+        <g class="r-eye r-down">
+          <line x1="23" y1="25" x2="23" y2="41" stroke-width="2" stroke-linecap="round"/>
+          <rect x="19.5" y="29" width="7" height="8" rx="1.5"/>
+        </g>
+        <g class="r-eye r-up">
+          <line x1="41" y1="22" x2="41" y2="39" stroke-width="2" stroke-linecap="round"/>
+          <rect x="37.5" y="25" width="7" height="10" rx="1.5"/>
+        </g>
+      </g>
+      <path class="r-mouth" d="M27 46.5 Q32 50.5 37 46.5" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>`;
+
+  // Minutes écoulées depuis une heure de Paris "YYYY-MM-DD HH:MM"
+  function ageMinutes(s) {
+    const p = parts(s);
+    if (!p) return Infinity;
+    const now = {};
+    new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Europe/Paris", year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", hourCycle: "h23",
+    }).formatToParts(new Date()).forEach((x) => (now[x.type] = x.value));
+    const a = Date.UTC(+p.y, +p.mo - 1, +p.d, +p.h, +p.mi);
+    const b = Date.UTC(+now.year, +now.month - 1, +now.day, +now.hour, +now.minute);
+    return (b - a) / 60000;
+  }
+
+  // En ligne : données de moins de 3 min ; en retard : moins de 15 min ; sinon hors ligne
+  function updateStatus() {
+    const brand = document.querySelector(".brand");
+    if (!brand) return;
+    const age = data ? ageMinutes(data.updated) : Infinity;
+    const status = !data && !failed ? "online" : age <= 3 ? "online" : age <= 15 ? "late" : "offline";
+    brand.dataset.status = status;
+    const label = t(status === "online" ? "aiOnline" : status === "late" ? "aiLate" : "aiOffline");
+    brand.title = data ? `${label} · ${t("updated", { d: fmtDate(data.updated), t: fmtTime(data.updated) })}` : label;
+  }
+
+  // Clignement à intervalle aléatoire, parfois double
+  function blink() {
+    const r = document.querySelector(".robot");
+    if (!r) return;
+    r.classList.remove("blink");
+    void r.getBBox();
+    r.classList.add("blink");
+    setTimeout(() => r.classList.remove("blink"), 200);
+  }
+  (function blinkLoop() {
+    setTimeout(() => {
+      if (!document.hidden) {
+        blink();
+        if (Math.random() < 0.25) setTimeout(blink, 280);
+      }
+      blinkLoop();
+    }, 2500 + Math.random() * 4000);
+  })();
+
   // ---------- Squelette de page ----------
   function renderShell() {
     document.documentElement.lang = lang;
     document.title = `${page.label} · Companion Stock`;
     document.getElementById("app").innerHTML = `
       <header class="top">
-        <a class="brand" href="index.html">Companion Stock</a>
+        <a class="brand" href="index.html">
+          ${ROBOT}
+          <span class="brand-text">
+            <span class="brand-name">Companion <span>Stock</span></span>
+            <span class="brand-tagline">${t("tagline")}</span>
+          </span>
+        </a>
         <nav class="tabs">${PAGES.map((p) => `<a href="${p.href}"${p.id === page.id ? ' aria-current="page"' : ""}>${p.label}</a>`).join("")}</nav>
         <div class="actions">
           <button class="icon-btn" id="theme-btn" title="${t("theme")}" aria-label="${t("theme")}">◐</button>
@@ -141,6 +219,7 @@
     dlg.querySelectorAll("[data-lang]").forEach((b) => (b.onclick = () => setLang(b.dataset.lang, true)));
     document.getElementById("theme-btn").onclick = toggleTheme;
     if (location.hash === "#about") dlg.showModal();
+    updateStatus();
   }
 
   function setLang(l, keepAbout) {
@@ -161,6 +240,7 @@
 
   // ---------- Contenu ----------
   function renderData() {
+    updateStatus();
     const main = document.getElementById("main");
     if (!data) {
       main.innerHTML = `<p class="status">${failed ? t("unavailable") : t("loading")}</p>`;
@@ -269,6 +349,7 @@
   renderData();
   load();
   setInterval(load, REFRESH_MS);
+  setInterval(updateStatus, 30000);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
 
   let resizeTimer;

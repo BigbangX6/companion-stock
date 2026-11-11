@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Companion Stock — robot IA">
+  <title>Companion Stock</title>
+  <style>
+    .gaze, .eye, .ring { transform-box: fill-box; transform-origin: center; }
+    .gaze { animation: gaze 9s ease-in-out infinite; }
+    .eye  { animation: blink 5.3s ease-in-out infinite; }
+    .ring { animation: pulse 2s ease-out infinite; }
+    @keyframes gaze {
+      0%, 18% { transform: translateX(0); }  24%, 42% { transform: translateX(-1.6px); }
+      48%, 62% { transform: translateX(0); } 68%, 86% { transform: translateX(1.6px); }
+      92%, 100% { transform: translateX(0); }
+    }
+    /* clignement simple puis double, sur un cycle de 5,3 s */
+    @keyframes blink {
+      0%, 40%, 43%, 88%, 91%, 94%, 97%, 100% { transform: scaleY(1); }
+      41.5%, 89.5%, 95.5% { transform: scaleY(.1); }
+    }
+    @keyframes pulse { 0% { transform: scale(1); opacity: .55; } 100% { transform: scale(2.6); opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } .ring { opacity: 0; } }
+  </style>
+  <line x1="32" y1="8" x2="32" y2="16" stroke="#0F172A" stroke-width="3" stroke-linecap="round"/>
+  <circle class="ring" cx="32" cy="6" r="4" fill="#10B981"/>
+  <circle cx="32" cy="6" r="4" fill="#10B981"/>
+  <rect x="4" y="30" width="5" height="12" rx="2.5" fill="#0F172A"/>
+  <rect x="55" y="30" width="5" height="12" rx="2.5" fill="#0F172A"/>
+  <rect x="9" y="16" width="46" height="40" rx="13" fill="#0F172A"/>
+  <g class="gaze">
+    <g class="eye" fill="#F43F5E" stroke="#F43F5E">
+      <line x1="23" y1="25" x2="23" y2="41" stroke-width="2" stroke-linecap="round"/>
+      <rect x="19.5" y="29" width="7" height="8" rx="1.5" stroke="none"/>
+    </g>
+    <g class="eye" fill="#10B981" stroke="#10B981">
+      <line x1="41" y1="22" x2="41" y2="39" stroke-width="2" stroke-linecap="round"/>
+      <rect x="37.5" y="25" width="7" height="10" rx="1.5" stroke="none"/>
+    </g>
+  </g>
+  <path d="M27 46.5 Q32 50.5 37 46.5" fill="none" stroke="#FFFFFF" stroke-opacity=".65" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Companion Stock">
+  <title>Companion Stock</title>
+  <mask id="cs-cut-b-sourire" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64">
+    <rect width="64" height="64" fill="#fff"/>
+  <rect x="14" y="22" width="36" height="17" rx="8.5" fill="#000"/>
+  <polyline points="19,34 25,29.5 31,32 38,26 44,27.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="45" cy="27" r="2.8" fill="#fff"/>
+  <path d="M25 44 Q32 50.5 39 44" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+  </mask>
+  <g mask="url(#cs-cut-b-sourire)">
+  <line x1="32" y1="7" x2="32" y2="15" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="32" cy="6" r="4" fill="currentColor"/>
+  <rect x="8" y="15" width="48" height="41" rx="15" fill="currentColor"/>
+  </g>
+</svg>

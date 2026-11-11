@@ -17,11 +17,25 @@ Le moteur, qui tourne sur un PC, dépose toutes les 45 secondes par SFTP deux fi
 | `assets/curve.js` | Courbe SVG (jours placés bout à bout, sans trou la nuit) |
 | `assets/about.js` | Texte de la page About (FR / EN) |
 | `assets/style.css` | Styles (clair / sombre, mobile) |
+| `assets/img/robot.svg` | Robot du logo (icône d'onglet) |
+| `assets/logo/` | Propositions de logo et page de test du robot animé (`test-anime.html`), non nécessaires en ligne |
 | `tools/make_sample.py` | Génère des JSON d'exemple aléatoires |
 | `tools/send_json.py` | Vérifie les JSON et les envoie sur le site par SFTP |
 | `tools/send_json.example.ini` | Modèle de configuration SFTP |
 
 Aucune librairie ni étape de compilation : on copie les fichiers tels quels sur l'hébergement.
+
+## Robot du logo
+
+Le robot à côté du nom (yeux en bougies) est dessiné dans `assets/app.js` et animé en CSS : regard qui glisse légèrement, clignement à intervalle aléatoire. Son antenne indique l'état du moteur d'après l'heure `updated` du JSON :
+
+| Antenne | État | Âge des données |
+| --- | --- | --- |
+| Verte, qui pulse | IA en ligne | 3 min ou moins |
+| Orange, qui pulse | IA en retard | 15 min ou moins |
+| Rouge, fixe | IA hors ligne | plus de 15 min, ou JSON illisible |
+
+Le détail s'affiche au survol du logo.
 
 ## Tester en local
 
@@ -64,4 +78,12 @@ Autres usages :
 
 ## Déployer
 
-Copier tous les fichiers (sauf `tools/`, `README.md` et `FORMAT_JSON.md`) sur l'hébergement. Le moteur remplace ensuite `cac40.json` et `dax.json`.
+### Sur GitHub Pages
+
+Le site est publié à l'adresse https://bigbangx6.github.io/companion-stock/ une fois GitHub Pages activé (Settings → Pages → Source : « Deploy from a branch », branche `main`, dossier `/ (root)`). Chaque modification poussée sur `main` est republiée en une minute environ. Le fichier `.nojekyll` demande à GitHub de servir les fichiers tels quels.
+
+Sur GitHub Pages, le site affiche les `cac40.json` et `dax.json` présents dans le dépôt : ce sont des exemples figés, et le robot indique donc « IA hors ligne ».
+
+### Sur l'hébergement principal
+
+Copier tous les fichiers (sauf `tools/`, `assets/logo/`, `README.md` et `FORMAT_JSON.md`) sur l'hébergement. Le moteur remplace ensuite `cac40.json` et `dax.json`.

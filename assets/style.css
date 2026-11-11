@@ -45,7 +45,35 @@ small { color: var(--muted); }
 
 /* En-tête */
 .top { display: flex; align-items: center; gap: 12px; padding: 14px 0; flex-wrap: wrap; }
-.brand { font-size: 20px; color: var(--text); text-decoration: none; margin-right: auto; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; margin-right: auto; }
+.brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+.brand-name { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+.brand-name span { color: var(--accent); font-weight: 400; }
+.brand-tagline { font-size: 12px; font-weight: 300; letter-spacing: .6px; color: var(--muted); margin-top: 3px; }
+
+/* Robot du logo : yeux en bougies, regard qui glisse, clignement (JS), antenne = état du moteur */
+.robot { flex: none; overflow: visible; --r-status: #10b981; }
+.robot .r-head { fill: var(--text); }
+.robot .r-stroke { stroke: var(--text); }
+.robot .r-mouth { stroke: var(--bg); opacity: .7; }
+.robot .r-up { fill: #10b981; stroke: #10b981; }
+.robot .r-down { fill: #f43f5e; stroke: #f43f5e; }
+.robot .r-dot, .robot .r-ring { fill: var(--r-status); transition: fill .4s; }
+.robot .r-gaze, .robot .r-eye, .robot .r-ring { transform-box: fill-box; transform-origin: center; }
+.robot .r-gaze { animation: r-gaze 9s ease-in-out infinite; }
+.robot.blink .r-eye { animation: r-blink .18s ease-in-out; }
+.robot .r-ring { opacity: 0; animation: r-pulse 2s ease-out infinite; }
+.brand[data-status="late"] .robot { --r-status: #f59e0b; }
+.brand[data-status="offline"] .robot { --r-status: #f43f5e; }
+.brand[data-status="offline"] .r-ring { animation: none; }
+@keyframes r-gaze {
+  0%, 18% { transform: translateX(0); } 24%, 42% { transform: translateX(-1.6px); }
+  48%, 62% { transform: translateX(0); } 68%, 86% { transform: translateX(1.6px); }
+  92%, 100% { transform: translateX(0); }
+}
+@keyframes r-blink { 50% { transform: scaleY(.1); } }
+@keyframes r-pulse { 0% { transform: scale(1); opacity: .55; } 100% { transform: scale(2.6); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .robot *, .robot.blink .r-eye { animation: none !important; } }
 .tabs { display: flex; background: var(--surface-2); border-radius: 10px; padding: 3px; order: 3; }
 .tabs a { padding: 6px 18px; border-radius: 8px; color: var(--text); text-decoration: none; font-size: 14px; }
 .tabs a[aria-current="page"] { background: var(--bg); box-shadow: 0 1px 2px rgba(0,0,0,.12); font-weight: 600; }

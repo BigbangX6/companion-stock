@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 72" width="340" height="72" role="img" aria-label="Companion Stock — Suivez les trades de l’IA">
+  <title>Companion Stock — Suivez les trades de l’IA</title>
+  <g transform="translate(0,4)">
+  <line x1="32" y1="7" x2="32" y2="16" stroke="#0F172A" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="32" cy="6" r="4" fill="#10B981"/>
+  <rect x="4" y="29" width="5" height="12" rx="2.5" fill="#0F172A"/>
+  <rect x="55" y="29" width="5" height="12" rx="2.5" fill="#0F172A"/>
+  <rect x="10" y="16" width="44" height="38" rx="13" fill="#0F172A"/>
+  <circle cx="24" cy="31" r="5.5" fill="#10B981"/>
+  <circle cx="40" cy="31" r="5.5" fill="#10B981"/>
+  <circle cx="25.8" cy="29.2" r="1.7" fill="#FFFFFF"/>
+  <circle cx="41.8" cy="29.2" r="1.7" fill="#FFFFFF"/>
+  <ellipse cx="17" cy="41" rx="3" ry="2" fill="#10B981" opacity="0.35"/>
+  <ellipse cx="47" cy="41" rx="3" ry="2" fill="#10B981" opacity="0.35"/>
+  <path d="M25 41.5 Q32 48.5 39 41.5" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <text x="80" y="38" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="30" font-weight="700" letter-spacing="-0.5" fill="#0F172A">Companion<tspan fill="#10B981" font-weight="300"> Stock</tspan></text>
+  <text x="81" y="60" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-size="14" font-weight="300" letter-spacing="1.2" fill="#64748B">Suivez les trades de l’IA</text>
+</svg>
