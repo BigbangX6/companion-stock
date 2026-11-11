@@ -1,0 +1,4 @@
+tools/send_json.ini
+tools/known_hosts
+__pycache__/
+.claude/
