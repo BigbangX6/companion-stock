@@ -131,8 +131,8 @@
       <line class="r-stroke" x1="32" y1="8" x2="32" y2="16" stroke-width="3" stroke-linecap="round"/>
       <circle class="r-ring" cx="32" cy="6" r="4"/>
       <circle class="r-dot" cx="32" cy="6" r="4"/>
-      <rect class="r-head" x="4" y="30" width="5" height="12" rx="2.5"/>
-      <rect class="r-head" x="55" y="30" width="5" height="12" rx="2.5"/>
+      <rect class="r-ear" x="4" y="30" width="5" height="12" rx="2.5"/>
+      <rect class="r-ear" x="55" y="30" width="5" height="12" rx="2.5"/>
       <rect class="r-head" x="9" y="16" width="46" height="40" rx="13"/>
       <g class="r-gaze">
         <g class="r-eye r-down">
