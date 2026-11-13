@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Couleurs du robot</title>
+<style>
+  :root { --page: #f1edf7; --text: #1d1b20; --muted: #6b6475; --site-light: #fbf8ff; --site-dark: #141218; --accent: #6a4bc4; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--text); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .intro { color: var(--muted); margin: 0 0 20px; }
+  .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+  .card { background: #fff; border-radius: 16px; padding: 16px; border: 1px solid #e2d9ee; }
+  .card h2 { font-size: 16px; margin: 0; display: flex; align-items: center; gap: 8px; }
+  .card h2 b { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 13px; }
+  .card p { margin: 4px 0 12px; color: var(--muted); font-size: 13px; }
+  .card.current h2 b { background: #1d1b20; }
+
+  /* En-tête du site, clair puis sombre, à la vraie taille */
+  .site { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; }
+  .site.light { background: var(--site-light); color: #1d1b20; }
+  .site.dark { background: var(--site-dark); color: #e8e0f0; margin-top: 8px; }
+  .brand-name { font-size: 20px; font-weight: 700; letter-spacing: -.3px; line-height: 1.1; }
+  .brand-name span { font-weight: 400; color: #6a4bc4; }
+  .dark .brand-name span { color: #b9a3ff; }
+  .tag { font-size: 12px; font-weight: 300; letter-spacing: .6px; opacity: .65; }
+
+  .row { display: flex; align-items: end; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+  .big { padding: 6px; border-radius: 12px; background: var(--site-light); }
+  /* Onglets de navigateur : l'icône à 16 px, comme dans la vraie vie */
+  .tabs { display: flex; flex-direction: column; gap: 6px; font-size: 12px; }
+  .tab { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 8px 8px 0 0; width: 170px; }
+  .tab.l { background: #ffffff; color: #333; box-shadow: 0 0 0 1px #ddd; }
+  .tab.d { background: #35363a; color: #e8eaed; }
+  .far { display: flex; gap: 10px; align-items: center; font-size: 12px; color: var(--muted); }
+
+  /* ---------- Robot (identique au site ; seules les couleurs changent) ---------- */
+  .robot { display: block; overflow: visible; flex: none; }
+  .robot .r-head { fill: var(--head); stroke: var(--edge, none); stroke-width: var(--edge-w, 0); }
+  .robot .r-ear { fill: var(--ear, var(--head)); }
+  .robot .r-stick { stroke: var(--stick, var(--ear, var(--head))); }
+  .robot .r-screen { fill: var(--screen, none); }
+  .robot .r-mouth { stroke: var(--mouth); }
+  .robot .r-up { fill: #10b981; stroke: #10b981; }
+  .robot .r-down { fill: #f43f5e; stroke: #f43f5e; }
+  .robot .r-dot, .robot .r-ring { fill: #10b981; }
+  .robot .r-gaze, .robot .r-eye, .robot .r-ring { transform-box: fill-box; transform-origin: center; }
+  .robot .r-gaze { animation: r-gaze 9s ease-in-out infinite; }
+  .robot.blink .r-eye { animation: r-blink .18s ease-in-out; }
+  .robot .r-ring { opacity: 0; animation: r-pulse 2s ease-out infinite; }
+  @keyframes r-gaze {
+    0%, 18% { transform: translateX(0); } 24%, 42% { transform: translateX(-1.6px); }
+    48%, 62% { transform: translateX(0); } 68%, 86% { transform: translateX(1.6px); }
+    92%, 100% { transform: translateX(0); }
+  }
+  @keyframes r-blink { 50% { transform: scaleY(.1); } }
+  @keyframes r-pulse { 0% { transform: scale(1); opacity: .55; } 100% { transform: scale(2.6); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .robot *, .robot.blink .r-eye { animation: none !important; } }
+
+  /* ---------- Les propositions ---------- */
+  .v0 { --head: #0f172a; --mouth: #ffffff; }
+  .v1 { --head: #6a4bc4; --screen: #f5f1ff; --mouth: #6a4bc4; }
+  .v2 { --head: #ddd2fb; --ear: #6a4bc4; --mouth: #6a4bc4; }
+  .v3 { --head: #ffffff; --edge: #6a4bc4; --edge-w: 3px; --ear: #6a4bc4; --mouth: #6a4bc4; }
+  .v4 { --head: url(#cs-grad); --screen: #f5f1ff; --ear: #6d5df5; --mouth: #6a4bc4; }
+  .v5 { --head: #e5e7eb; --ear: #94a3b8; --mouth: #64748b; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="cs-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<template id="robot-tpl">
+  <svg class="robot" viewBox="0 0 64 64" aria-hidden="true">
+    <line class="r-stick" x1="32" y1="8" x2="32" y2="16" stroke-width="3" stroke-linecap="round"/>
+    <circle class="r-ring" cx="32" cy="6" r="4"/>
+    <circle class="r-dot" cx="32" cy="6" r="4"/>
+    <rect class="r-ear" x="4" y="30" width="5" height="12" rx="2.5"/>
+    <rect class="r-ear" x="55" y="30" width="5" height="12" rx="2.5"/>
+    <rect class="r-head" x="9" y="16" width="46" height="40" rx="13"/>
+    <rect class="r-screen" x="14" y="20" width="36" height="32" rx="9"/>
+    <g class="r-gaze">
+      <g class="r-eye r-down">
+        <line x1="23" y1="25" x2="23" y2="41" stroke-width="2" stroke-linecap="round"/>
+        <rect x="19.5" y="29" width="7" height="8" rx="1.5"/>
+      </g>
+      <g class="r-eye r-up">
+        <line x1="41" y1="22" x2="41" y2="39" stroke-width="2" stroke-linecap="round"/>
+        <rect x="37.5" y="25" width="7" height="10" rx="1.5"/>
+      </g>
+    </g>
+    <path class="r-mouth" d="M27 46.5 Q32 50.5 37 46.5" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+</template>
+
+<main>
+  <h1>Couleur de la tête du robot</h1>
+  <p class="intro">Même robot, mêmes animations (regard, clignement, antenne) : seule la couleur change. Pour chaque proposition, l'en-tête du site en clair et en sombre, le robot en grand, puis l'icône d'onglet à 16 px et la vue « de loin ».</p>
+  <div class="grid" id="grid"></div>
+</main>
+
+<script>
+  const VARIANTS = [
+    ["v0", "0", "Actuelle : bleu nuit", "Pour comparer : très classe de près, mais une tache sombre de loin.", true],
+    ["v1", "1", "Violet du site + écran clair", "La tête reprend le violet du site ; les yeux et le sourire sont sur un écran clair, donc toujours bien lisibles."],
+    ["v2", "2", "Lavande douce", "Tête claire et légère, oreilles et antenne violettes. Le plus doux, très « compagnon »."],
+    ["v3", "3", "Blanc, contour violet", "Tête blanche cernée de violet : propre, net, ressort aussi bien sur fond clair que sombre."],
+    ["v4", "4", "Dégradé violet → bleu + écran clair", "L'esprit « IA » : un dégradé moderne, avec l'écran clair pour garder les bougies lisibles."],
+    ["v5", "5", "Gris perle", "Neutre, façon robot métallique. Discret, s'accorde avec tout, mais moins de personnalité."],
+  ];
+  const tpl = document.getElementById("robot-tpl");
+  const robot = (size) => {
+    const svg = tpl.content.firstElementChild.cloneNode(true);
+    svg.setAttribute("width", size); svg.setAttribute("height", size);
+    return svg.outerHTML;
+  };
+  document.getElementById("grid").innerHTML = VARIANTS.map(([cls, n, name, desc, current]) => `
+    <section class="card ${cls}${current ? " current" : ""}">
+      <h2><b>${n}</b>${name}</h2>
+      <p>${desc}</p>
+      <div class="site light">${robot(44)}<div><div class="brand-name">Companion <span>Stock</span></div><div class="tag">Suivez les trades de l’IA</div></div></div>
+      <div class="site dark">${robot(44)}<div><div class="brand-name">Companion <span>Stock</span></div><div class="tag">Suivez les trades de l’IA</div></div></div>
+      <div class="row">
+        <div class="big">${robot(96)}</div>
+        <div class="tabs">
+          <div class="tab l">${robot(16)} Companion Stock</div>
+          <div class="tab d">${robot(16)} Companion Stock</div>
+          <div class="far">De loin : ${robot(24)} ${robot(12)}</div>
+        </div>
+      </div>
+    </section>`).join("");
+
+  // Clignement à intervalle aléatoire, comme sur le site
+  const robots = [...document.querySelectorAll(".robot")];
+  function blink() {
+    robots.forEach((r) => { r.classList.remove("blink"); void r.getBBox(); r.classList.add("blink"); });
+    setTimeout(() => robots.forEach((r) => r.classList.remove("blink")), 200);
+  }
+  (function loop() {
+    setTimeout(() => { blink(); if (Math.random() < 0.25) setTimeout(blink, 280); loop(); }, 2500 + Math.random() * 4000);
+  })();
+</script>
+</body>
+</html>
