@@ -48,14 +48,16 @@ small { color: var(--muted); }
 .brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; margin-right: auto; }
 .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
 .brand-name { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
-.brand-name span { color: var(--accent); font-weight: 400; }
+.brand-name span { font-weight: 400; }
 .brand-tagline { font-size: 12px; font-weight: 300; letter-spacing: .6px; color: var(--muted); margin-top: 3px; }
 
 /* Robot du logo : yeux en bougies, regard qui glisse, clignement (JS), antenne = état du moteur */
 .robot { flex: none; overflow: visible; --r-status: #10b981; }
-.robot .r-head { fill: var(--text); }
-.robot .r-stroke { stroke: var(--text); }
-.robot .r-mouth { stroke: var(--bg); opacity: .7; }
+/* Gris perle : tête claire, oreilles et antenne gris-bleu (identique en thème clair et sombre) */
+.robot .r-head { fill: #e5e7eb; }
+.robot .r-ear { fill: #94a3b8; }
+.robot .r-stroke { stroke: #94a3b8; }
+.robot .r-mouth { stroke: #64748b; }
 .robot .r-up { fill: #10b981; stroke: #10b981; }
 .robot .r-down { fill: #f43f5e; stroke: #f43f5e; }
 .robot .r-dot, .robot .r-ring { fill: var(--r-status); transition: fill .4s; }
