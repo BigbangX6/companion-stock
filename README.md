@@ -18,8 +18,9 @@ Le moteur, qui tourne sur un PC, dépose toutes les 45 secondes par SFTP deux fi
 | `assets/style.css` | Styles (clair / sombre, mobile) |
 | `assets/img/robot.svg`, `robot-32.png`, `robot-180.png`, `favicon.ico` | Icônes du robot (onglet, écran d'accueil iPhone) ; intégrées dans `dist/index.html` |
 | `assets/logo/` | Propositions de logo et page de test du robot animé (`test-anime.html`), non nécessaires en ligne |
-| `dist/` | **Les 3 fichiers à envoyer sur OVH**, générés par `tools/build_single.py` |
+| `dist/` | **Les 3 fichiers à envoyer sur OVH**, générés par `tools/build_single.py` ; `dist/c/` : la fonction C pour le moteur |
 | `tools/build_single.py` | Fabrique `dist/index.html`, le site en un seul fichier |
+| `tools/c/` | Fonction C qui écrit les JSON (`companion_json.h`, `companion_json.c`) et un exemple complet (`exemple.c`) |
 | `tools/make_sample.py` | Génère des JSON d'exemple aléatoires |
 | `tools/send_json.py` | Vérifie les JSON et les envoie sur le site par SFTP |
 | `tools/send_json.example.ini` | Modèle de configuration SFTP |
@@ -45,6 +46,42 @@ python3 -m http.server 8737
 ```
 
 Puis ouvrir http://localhost:8737.
+
+## Écrire les JSON depuis un programme en C
+
+Le dossier `tools/c/` contient une fonction qui écrit `cac40.json` ou `dax.json` au bon format. Elle est en C99 standard, sans bibliothèque externe, et compile aussi en C++.
+
+1. Copier `companion_json.h` et `companion_json.c` dans le projet du moteur et les ajouter à la compilation.
+2. Remplir une structure `cs_data`, puis appeler `cs_write_json` :
+
+```c
+#include "companion_json.h"
+
+cs_data d = {0};                 /* en C++ : cs_data d = {}; */
+d.index = "CAC 40";
+d.price_value = 8123.4;
+d.price_change_pct = 0.42;
+cs_paris_time(time(NULL), d.price_time);
+d.curve = points;   d.curve_count = nb_points;    /* du plus ancien au plus récent */
+d.trades = trades;  d.trades_count = nb_trades;   /* du plus récent au plus ancien */
+/* ... position, week, month, year : voir exemple.c */
+
+if (cs_write_json("cac40.json", &d) != 0) {
+    /* rien n'est écrit ; chaque problème est expliqué sur la sortie d'erreur */
+}
+```
+
+Avant d'écrire, la fonction vérifie tout : champs oubliés, heures mal formées, Call/Put non renseigné, courbe ou trades dans le désordre. En cas de problème, elle n'écrit rien et explique chaque erreur, par exemple `[companion_json] price_time : "2026-11-1 9:05" n'est pas une heure "AAAA-MM-JJ HH:MM"`.
+
+`updated` laissé vide est rempli avec l'heure de Paris actuelle. Le fichier est écrit en `.tmp` puis renommé : il n'est jamais lu à moitié écrit. Les nombres s'écrivent toujours avec un point, même si le programme est réglé en français.
+
+| Code renvoyé | Signification |
+| --- | --- |
+| 0 | Fichier écrit |
+| 1 | Données incorrectes : rien n'est écrit, explication sur la sortie d'erreur |
+| 2 | Écriture impossible (dossier absent, disque plein, fichier ouvert ailleurs) |
+
+Pour essayer : `gcc tools/c/exemple.c tools/c/companion_json.c -o exemple && ./exemple`. Le programme écrit deux fichiers d'exemple que le site affiche directement.
 
 ## Envoyer les JSON depuis le PC du moteur
 
@@ -94,6 +131,8 @@ Le site en ligne tient en **3 fichiers**, tous dans le dossier `dist/` :
 | `index.html` | Tout le site : pages, style, scripts, texte About, drapeaux, robot |
 | `cac40.json` | Données du CAC 40 (exemple ; le moteur le remplace) |
 | `dax.json` | Données du DAX (exemple ; le moteur le remplace) |
+
+Le sous-dossier `dist/c/` contient une copie de la fonction C qui écrit les JSON (voir plus haut), à transmettre à la personne qui s'occupe du moteur. Il n'a pas besoin d'être mis en ligne.
 
 Les déposer à la racine du site. Pour une mise à jour du site, seul `index.html` change.
 

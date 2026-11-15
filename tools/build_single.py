@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """Fabrique la version « un seul fichier » du site, à envoyer sur l'hébergement (OVH).
 
-    python3 tools/build_single.py           # écrit dist/index.html, dist/cac40.json, dist/dax.json
-    python3 tools/build_single.py --check   # vérifie que dist/index.html est à jour (code 1 sinon)
+    python3 tools/build_single.py           # écrit dist/index.html, dist/cac40.json, dist/dax.json et dist/c/
+    python3 tools/build_single.py --check   # vérifie que dist/ est à jour (code 1 sinon)
 
 Le style, les scripts, le texte About, les drapeaux et l'icône du robot sont copiés
 dans dist/index.html. Seuls les deux JSON restent à côté, car le moteur les remplace.
 Ne pas modifier dist/index.html à la main : modifier les sources, puis relancer ce script.
+
+dist/c/ reçoit une copie de la fonction C qui écrit les JSON (tools/c/), pour la personne
+qui s'occupe du moteur. Ce dossier n'a pas besoin d'être mis en ligne.
 """
 import base64
 import re
@@ -17,6 +20,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT / "dist"
 JSON_FILES = ["cac40.json", "dax.json"]
+C_FILES = ["companion_json.h", "companion_json.c", "exemple.c"]
 
 
 def read(rel):
@@ -83,16 +87,24 @@ def main():
     html = build()
     out = DIST / "index.html"
     if "--check" in sys.argv:
-        if not out.exists() or out.read_text(encoding="utf-8") != html:
-            print("dist/index.html n'est pas à jour : lancer python3 tools/build_single.py")
+        stale = [] if out.exists() and out.read_text(encoding="utf-8") == html else ["index.html"]
+        for name in C_FILES:
+            copy = DIST / "c" / name
+            if not copy.exists() or copy.read_bytes() != (ROOT / "tools" / "c" / name).read_bytes():
+                stale.append("c/" + name)
+        if stale:
+            print(f"dist/ n'est pas à jour ({', '.join(stale)}) : lancer python3 tools/build_single.py")
             return 1
-        print("dist/index.html est à jour.")
+        print("dist/ est à jour.")
         return 0
     DIST.mkdir(exist_ok=True)
     out.write_text(html, encoding="utf-8")
     for name in JSON_FILES:
         shutil.copyfile(ROOT / name, DIST / name)
-    print(f"dist/index.html ({len(html.encode('utf-8')) // 1024} Ko) + {', '.join(JSON_FILES)}")
+    (DIST / "c").mkdir(exist_ok=True)
+    for name in C_FILES:
+        shutil.copyfile(ROOT / "tools" / "c" / name, DIST / "c" / name)
+    print(f"dist/index.html ({len(html.encode('utf-8')) // 1024} Ko) + {', '.join(JSON_FILES)} + c/ ({', '.join(C_FILES)})")
     return 0
 
 
