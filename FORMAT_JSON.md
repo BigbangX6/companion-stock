@@ -8,6 +8,8 @@ Les deux fichiers ont exactement la même structure. Seuls le nom de l'indice et
 
 Le moteur achète un **Call** (gain si l'indice monte) ou un **Put** (gain si l'indice baisse), puis le revend. Le champ `type` dit lequel des deux ; l'achat et la vente sont décrits par les heures et les prix.
 
+> **Moteur en C ?** La fonction `cs_write_json` de [`tools/c/`](tools/c/) écrit ce fichier et vérifie toutes les règles ci-dessous. Voir la section « Écrire les JSON depuis un programme en C » du [README](README.md).
+
 ## Exemple complet
 
 Voici un `cac40.json` valide. La courbe est raccourcie ici à quelques points ; en réalité elle en contient environ 500. Des fichiers complets sont fournis à la racine du dépôt : [`cac40.json`](cac40.json) et [`dax.json`](dax.json).
