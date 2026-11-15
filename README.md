@@ -18,7 +18,7 @@ Le moteur, qui tourne sur un PC, dépose toutes les 45 secondes par SFTP deux fi
 | `assets/style.css` | Styles (clair / sombre, mobile) |
 | `assets/img/robot.svg`, `robot-32.png`, `robot-180.png`, `favicon.ico` | Icônes du robot (onglet, écran d'accueil iPhone) ; intégrées dans `dist/index.html` |
 | `assets/logo/` | Propositions de logo et page de test du robot animé (`test-anime.html`), non nécessaires en ligne |
-| `dist/` | **Les 3 fichiers à envoyer sur OVH**, générés par `tools/build_single.py` |
+| `dist/` | **Les 3 fichiers à envoyer sur OVH**, générés par `tools/build_single.py` ; `dist/c/` : la fonction C pour le moteur |
 | `tools/build_single.py` | Fabrique `dist/index.html`, le site en un seul fichier |
 | `tools/c/` | Fonction C qui écrit les JSON (`companion_json.h`, `companion_json.c`) et un exemple complet (`exemple.c`) |
 | `tools/make_sample.py` | Génère des JSON d'exemple aléatoires |
@@ -131,6 +131,8 @@ Le site en ligne tient en **3 fichiers**, tous dans le dossier `dist/` :
 | `index.html` | Tout le site : pages, style, scripts, texte About, drapeaux, robot |
 | `cac40.json` | Données du CAC 40 (exemple ; le moteur le remplace) |
 | `dax.json` | Données du DAX (exemple ; le moteur le remplace) |
+
+Le sous-dossier `dist/c/` contient une copie de la fonction C qui écrit les JSON (voir plus haut), à transmettre à la personne qui s'occupe du moteur. Il n'a pas besoin d'être mis en ligne.
 
 Les déposer à la racine du site. Pour une mise à jour du site, seul `index.html` change.
 
