@@ -8,7 +8,7 @@ Les deux fichiers ont exactement la même structure. Seuls le nom de l'indice et
 
 Le moteur achète un **Call** (gain si l'indice monte) ou un **Put** (gain si l'indice baisse), puis le revend. Le champ `type` dit lequel des deux ; l'achat et la vente sont décrits par les heures et les prix.
 
-> **Moteur en C ?** La fonction `cs_write_json` de [`tools/c/`](tools/c/) écrit ce fichier et vérifie toutes les règles ci-dessous. Voir la section « Écrire les JSON depuis un programme en C » du [README](README.md).
+> **Moteur en C ?** La fonction `cs_write_json` de [`tools/c/`](tools/c/) écrit ce fichier à partir d'une structure C. Elle ne vérifie rien : les règles ci-dessous restent à respecter. Voir la section « Écrire les JSON depuis un programme en C » du [README](README.md).
 
 ## Exemple complet
 
