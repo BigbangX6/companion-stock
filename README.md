@@ -49,39 +49,31 @@ Puis ouvrir http://localhost:8737.
 
 ## Écrire les JSON depuis un programme en C
 
-Le dossier `tools/c/` contient une fonction qui écrit `cac40.json` ou `dax.json` au bon format. Elle est en C99 standard, sans bibliothèque externe, et compile aussi en C++.
+Le dossier `tools/c/` contient une seule fonction, `cs_write_json`, qui passe d'une structure C au fichier JSON. Elle est en C standard, sans bibliothèque externe, et compile aussi en C++ et avec Visual Studio.
 
 1. Copier `companion_json.h` et `companion_json.c` dans le projet du moteur et les ajouter à la compilation.
-2. Remplir une structure `cs_data`, puis appeler `cs_write_json` :
+2. Remplir une structure `cs_data`, puis appeler la fonction :
 
 ```c
 #include "companion_json.h"
 
-cs_data d = {0};                 /* en C++ : cs_data d = {}; */
+cs_data d;
 d.index = "CAC 40";
+d.updated = "2026-11-10 15:42";      /* un texte, ou une variable char[] */
 d.price_value = 8123.4;
 d.price_change_pct = 0.42;
-cs_paris_time(time(NULL), d.price_time);
-d.curve = points;   d.curve_count = nb_points;    /* du plus ancien au plus récent */
-d.trades = trades;  d.trades_count = nb_trades;   /* du plus récent au plus ancien */
-/* ... position, week, month, year : voir exemple.c */
+d.price_time = "2026-11-10 15:42";
+d.position = NULL;                   /* ou l'adresse d'un cs_position */
+d.curve = points;   d.curve_count = nb_points;
+d.trades = trades;  d.trades_count = nb_trades;
+/* week, month, year : voir exemple.c */
 
-if (cs_write_json("cac40.json", &d) != 0) {
-    /* rien n'est écrit ; chaque problème est expliqué sur la sortie d'erreur */
-}
+cs_write_json("cac40.json", &d);     /* 0 = écrit, -1 = fichier impossible à créer */
 ```
 
-Avant d'écrire, la fonction vérifie tout : champs oubliés, heures mal formées, Call/Put non renseigné, courbe ou trades dans le désordre. En cas de problème, elle n'écrit rien et explique chaque erreur, par exemple `[companion_json] price_time : "2026-11-1 9:05" n'est pas une heure "AAAA-MM-JJ HH:MM"`.
+La fonction écrit ce qu'on lui donne, sans rien vérifier : les règles de [FORMAT_JSON.md](FORMAT_JSON.md) restent à respecter (heures `"AAAA-MM-JJ HH:MM"` à l'heure de Paris, `"call"` ou `"put"`, ordre de la courbe et des trades). Pour contrôler un fichier : `python tools/send_json.py --check cac40.json`.
 
-`updated` laissé vide est rempli avec l'heure de Paris actuelle. Le fichier est écrit en `.tmp` puis renommé : il n'est jamais lu à moitié écrit. Les nombres s'écrivent toujours avec un point, même si le programme est réglé en français.
-
-| Code renvoyé | Signification |
-| --- | --- |
-| 0 | Fichier écrit |
-| 1 | Données incorrectes : rien n'est écrit, explication sur la sortie d'erreur |
-| 2 | Écriture impossible (dossier absent, disque plein, fichier ouvert ailleurs) |
-
-Pour essayer : `gcc tools/c/exemple.c tools/c/companion_json.c -o exemple && ./exemple`. Le programme écrit deux fichiers d'exemple que le site affiche directement.
+Pour essayer : `gcc tools/c/exemple.c tools/c/companion_json.c -o exemple && ./exemple`.
 
 ## Envoyer les JSON depuis le PC du moteur
 
